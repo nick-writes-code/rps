@@ -46,14 +46,14 @@ function calculateWinner(humanChoice, computerChoice) {
     case "scissors":
       if ("paper" === computerChoice) {
         return 1;
-      } else if ("Rock" === computerChoice) {
+      } else if ("rock" === computerChoice) {
         return -1
       }
       return 0;
     case "paper": {
-      if ("Rock" === computerChoice) {
+      if ("rock" === computerChoice) {
         return 1;
-      } else if ("Scissors" === computerChoice) {
+      } else if ("scissors" === computerChoice) {
         return -1;
       }
       return 0;
@@ -62,6 +62,7 @@ function calculateWinner(humanChoice, computerChoice) {
 }
 
 function playGame() {
+  console.log("Five rounds of rock, paper, scissors: Let's go!");
   for (let i = 1; i < 6; i++) {
     playRound(i, getHumanChoice(), getComputerChoice());
   }
