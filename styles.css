@@ -1,0 +1,67 @@
+body {
+  background-color: blanchedalmond;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-family: "EB Garamond", serif;
+  font-weight: 400;
+  font-size: 2rem;
+}
+
+#title {
+  font-weight: 700;
+  font-size: 3rem;
+  margin: 10px;
+}
+
+#subtitle {
+  margin: 6px auto;
+}
+
+#total-score {
+  margin: 6px auto 24px;
+}
+
+.column-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid black;
+}
+
+#middle-column{
+  width: 300px;
+}
+
+.column-header {
+  text-align: center;
+  display: flex;
+  margin: 6px auto 12px;
+  font-weight: 500;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  padding: 10px;
+  margin: 8px;
+  border: 2px solid black;
+  border-radius: 6px;
+  font-family: "EB Garamond", serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+p {
+  font-size: 1.5rem;
+}
