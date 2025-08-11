@@ -4,11 +4,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>RPS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="rps.js" defer></script>
 </head>
 
 <body>
-<script src="rps.js"></script>
+  <div id="title">Rock, Paper, Scissors</div>
+  <div id="subtitle"></div>
+  <div id="total-score"></div>
+  <div class="column-container">
+    <div id="player-move-history" class="column">
+      <div class="column-header">Player Moves</div>
+    </div>
+    <div class="column" id="middle-column">
+      <div id="message" class="column-header"></div>
+      <div class="button-container"><button id="rock">Rock (R)</button></div>
+      <div class="button-container"><button id="paper">Paper (P)</button></div>
+      <div class="button-container"><button id="scissors">Scissors (S)</button></div>
+    </div>
+    <div id="bot-move-history" class="column">
+      <div class="column-header">Bot Moves</div>
+    </div>
+  </div>
 </body>
 
 </html>
