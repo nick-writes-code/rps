@@ -1,27 +1,24 @@
 // TODO convert this to use an 'enum' instead of strings
 const moves = ["rock", "paper", "scissors"]
 const winningScore = 5;
-
 let playerScore = 0;
 let botScore = 0;
-// make sure round results don't get overwritten by move prompt when player moves fast
-let stackedMoves = 0;
 
 const totalScoreDiv = document.querySelector("#total-score");
 const messageDiv = document.querySelector("#message");
 const playerMoveHistoryElement = document.querySelector("#player-move-history");
 const botMoveHistoryElement = document.querySelector("#bot-move-history");
 
-playGame();
+const playAgainButton = document.querySelector("#play-again");
+const rockButton = document.querySelector("#rock");
+const paperButton = document.querySelector("#paper");
+const scissorsButton = document.querySelector("#scissors");
 
-function playGame() {
-  populateSubtitleWithWinningScore();
-  updateTotalScore();
-  showMovePrompt();
-  // add event listeners
-  const rockButton = document.querySelector("#rock");
-  const paperButton = document.querySelector("#paper");
-  const scissorsButton = document.querySelector("#scissors");
+addEventListeners();
+startNewGame();
+
+function addEventListeners() {
+  playAgainButton.addEventListener("click", () => startNewGame(true));
   rockButton.addEventListener("click", () => makeMove(rockButton.id));
   paperButton.addEventListener("click", () => makeMove(paperButton.id));
   scissorsButton.addEventListener("click", () => makeMove(scissorsButton.id));
@@ -36,8 +33,51 @@ function playGame() {
       case "p":
         makeMove("paper");
         break;
+      case "a":
+        startNewGame(true);
+        break;
     }
   });
+}
+
+function startNewGame(waitForGameOver = false) {
+  if (!isGameOver() && waitForGameOver) {
+    return;
+  }
+  resetScores();
+  setUpVisualsForNewGame();
+  clearMoveHistories();
+  populateSubtitleWithWinningScore();
+  updateTotalScore();
+
+  runGame();
+}
+
+// Let the event listeners do their thing until the game is over.
+function runGame() {
+  const gameOverMessage = checkForGameOver();
+  if (gameOverMessage) {
+    messageDiv.textContent = gameOverMessage;
+  }
+}
+
+function setUpVisualsForNewGame() {
+  playAgainButton.hidden = true;
+  rockButton.hidden = false;
+  paperButton.hidden = false;
+  scissorsButton.hidden = false;
+  messageDiv.textContent = "What's your move?";
+}
+
+function clearMoveHistories() {
+  const playerMoves = playerMoveHistoryElement.querySelectorAll("p");
+  if (playerMoves) {
+    playerMoves.forEach(move => move.remove());
+  }
+  const botMoves = botMoveHistoryElement.querySelectorAll("p");
+  if (botMoves) {
+    botMoves.forEach(move => move.remove());
+  }
 }
 
 function populateSubtitleWithWinningScore() {
@@ -49,32 +89,11 @@ function updateTotalScore() {
   totalScoreDiv.textContent = `Score: Player ${playerScore}, Bot ${botScore}`;
 }
 
-function showMovePrompt() {
-  const gameOverMessage = getGameOverMessage();
-  if (gameOverMessage) {
-    messageDiv.textContent = gameOverMessage;
-    // TODO remove the listeners so the game ends and
-    // TODO give the user a way to play again
-  } else {
-    if (stackedMoves < 2) {
-      messageDiv.textContent = "What's your move?";
-      stackedMoves = 0;
-    } else {
-      stackedMoves--;
-    }
-  }
-}
-
 function makeMove(move) {
+  if (isGameOver()) {
+    return;
+  }
   const botMove = getRandomMove();
-
-  // add the player and bot moves to the history
-  const newPlayerMoveElement = document.createElement("p");
-  newPlayerMoveElement.textContent = move;
-  playerMoveHistoryElement.appendChild(newPlayerMoveElement);
-  const newBotMoveElement = document.createElement("p");
-  newBotMoveElement.textContent = botMove;
-  botMoveHistoryElement.appendChild(newBotMoveElement);
 
   const roundResult = calculateRoundResult(move, botMove);
   if (roundResult > 0) {
@@ -84,20 +103,26 @@ function makeMove(move) {
   }
   updateTotalScore();
   displayRoundResult(roundResult, move, botMove);
-  stackedMoves++;
-  setTimeout(() => showMovePrompt(), 1500);
+  runGame();
 }
 
 function displayRoundResult(roundResult, playerMove, botMove) {
-  let message;
+  const newPlayerMoveElement = document.createElement("p");
+  const newBotMoveElement = document.createElement("p");
   if (roundResult === 0) {
-    message = "It's a tie!";
+    newPlayerMoveElement.textContent = playerMove;
+    newBotMoveElement.textContent = botMove;
   } else if (roundResult > 0) {
-    message = "You win this round!";
+    newPlayerMoveElement.classList.add("winner");
+    newPlayerMoveElement.textContent = playerMove + ` (${playerScore})`;
+    newBotMoveElement.textContent = botMove;
   } else {
-    message = " You lose this round!";
+    newBotMoveElement.classList.add("winner");
+    newBotMoveElement.textContent = botMove + ` (${botScore})`;
+    newPlayerMoveElement.textContent = playerMove;
   }
-  messageDiv.textContent = message;
+  playerMoveHistoryElement.appendChild(newPlayerMoveElement);
+  botMoveHistoryElement.appendChild(newBotMoveElement);
 }
 
 function getRandomMove() {
@@ -132,13 +157,25 @@ function calculateRoundResult(playerMove, botMove) {
   }
 }
 
-function getGameOverMessage() {
-  if (playerScore >= winningScore) {
-    return `You were the first to score ${winningScore}! You win! Refresh the page to play again.`;
-  } else if (botScore >= winningScore) {
-    return `The bot got to ${winningScore} before you! Better luck next time! Refresh the page to play again.`;
+function checkForGameOver() {
+  if (!isGameOver()) {
+    return "";
   }
-  return "";
+
+  playAgainButton.hidden = false;
+  rockButton.hidden = true;
+  paperButton.hidden = true;
+  scissorsButton.hidden = true;
+
+  if (playerScore >= winningScore) {
+    return `You win, ${playerScore} to ${botScore}! ` + "\u{1f60e}";
+  } else {
+    return `You lose, ${playerScore} to ${botScore}! ` + "\u{1f62f}";
+  }
+}
+
+function isGameOver() {
+  return playerScore >= winningScore || botScore >= winningScore;
 }
 
 function resetScores() {
